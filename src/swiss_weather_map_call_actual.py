@@ -16,12 +16,12 @@ def open_weather_call(stationId,epoch_time):
     data = r.json()  # This will return entire content.
     #data['timestamp_collect'] = epoch_time
     logging.debug(data)
-    with open('/home/claude/PycharmProjects/pv/data_weather/open_swiss_weather_'+ str(stationId) +'_' + epoch_time + '.json', 'w', encoding='utf-8') as outfile:
+    with open('/home/claude/repo/bda-solar/data/data_weather/open_swiss_weather_'+ str(stationId) +'_' + epoch_time + '.json', 'w', encoding='utf-8') as outfile:
         json.dump(data, outfile, indent=4, ensure_ascii=False)
     conn.close()
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='/home/claude/PycharmProjects/pv/solar_requests.log',
+    logging.basicConfig(filename='/home/claude/repo/bda-solar/log/solar_requests.log',
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                         level=logging.DEBUG)
     epoch_time_now = str(round(time.time()))
