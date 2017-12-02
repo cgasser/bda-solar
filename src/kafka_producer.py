@@ -4,7 +4,7 @@
 
 from confluent_kafka import Producer
 
-p = Producer({'bootstrap.servers': 'localhost,mybroker2'})
+p = Producer({'bootstrap.servers': 'localhost'})
 
 #for data in some_data_source:
     #p.produce('mytopic', data.encode('utf-8'))
