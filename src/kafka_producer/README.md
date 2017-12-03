@@ -26,4 +26,4 @@ In order to collect frequently new data (current) we have setup a cronjop to cal
 - caller_producer_open_weather_baa from Open Weather
 
 ### Settings on SH-01
-Cronjop is available on SH-01 in XX
+To see or change the crontab configs just use 'crontab -e' in on the SH-01 terminal with user bda.
