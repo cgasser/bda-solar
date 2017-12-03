@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     # Call open Weather api to get Data
     stationIdEinsiedeln = "EIN"
-    weather_data = open_weather_call(stationIdEinsiedeln,epoch_time_now)
+    weather_data = open_weather_call(stationIdEinsiedeln)
 
     # Write to local store
     path = os.path.realpath('../data/data_swiss_weather')
