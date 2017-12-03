@@ -4,6 +4,10 @@
 
 from confluent_kafka import Producer
 import socket
+import logging
+
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                        level=logging.DEBUG)
 
 topic = 'myTopic'
 
@@ -11,7 +15,7 @@ topic = 'myTopic'
 conf = {'bootstrap.servers': "localhost",
         'client.id': socket.gethostname(),
         'default.topic.config': {'acks': '1'}}
-
+logging.info("Confluent Message config client.id: " + socket.gethostname())
 
 producer = Producer(conf)
 
@@ -22,8 +26,9 @@ def acked(err, msg):
     else:
         print("Message produced: %s" % (str(msg)))
 
-
+logging.info("Send Message: " + str('Dies ist eine Testnachricht'))
 producer.produce(topic, str('Dies ist eine Testnachricht'), callback=acked)
+
 
 # Wait up to 1 second for events. Callbacks will be invoked during
 # this method call if the message is acknowledged.
