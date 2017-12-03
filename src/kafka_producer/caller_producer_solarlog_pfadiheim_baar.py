@@ -63,7 +63,7 @@ if __name__ == "__main__":
     # Write to local store
     path = '/tmp/data'
     logging.info("Write JSON to : " + path)
-    with open(path + '/solarlog_' + str(pfadheimBaarCID) + '_pfadiheimBaar_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
+    with open(path + '/solarlog_' + str(pfadheimBaarCID) + '_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
         json.dump(solar_data, outfile, indent=4, ensure_ascii=False)
 
     # Write to KAFKA
