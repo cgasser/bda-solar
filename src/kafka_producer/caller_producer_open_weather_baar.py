@@ -1,8 +1,14 @@
 #!/usr/bin/env python3
-### lightweight open weather map api caller to test if this can be used to gatter data_weather
+#
+# Open weather api caller and Kafka message producer
+#
+# Run the file directly on SourceHost01 with python3
+# To see if data correctly can be consumed use following confluent cli:
+# $ kafka_producer-console-consumer --bootstrap-server localhost:9092 --topic open_weather --from-beginning
+#
+# Thanks goes to the example from https://docs.confluent.io/4.0.0/clients/producer.html
 
-import os
-import getpass
+
 import http.client
 import json
 import time
@@ -12,9 +18,9 @@ from confluent_kafka import Producer
 import socket
 
 
-def open_weather_call(appId,zipId):
+def open_weather_call(app_id, zip_id):
     conn = http.client.HTTPConnection("")
-    r = requests.get("http://api.openweathermap.org/data/2.5/weather?zip="+ str(zipId) +",ch" +"&appid="+ appId)
+    r = requests.get("http://api.openweathermap.org/data/2.5/weather?zip=" + str(zip_id) + ",ch" + "&appid=" + app_id)
     logging.info("Response: " + str(r.status_code) + " " + r.reason)
 
     data = r.json()  # This will return entire content.
@@ -61,9 +67,9 @@ if __name__ == "__main__":
     weather_data = open_weather_call(apiKey,zip)
 
     # Write to local store
-    #path = os.path.realpath('../data/data_open_weather')
     path = '/tmp/data'
     logging.info("Write jsno to : " + path)
+
     with open(path + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
         json.dump(weather_data, outfile, indent=4, ensure_ascii=False)
 

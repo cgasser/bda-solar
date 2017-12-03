@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
-### lightweight open weather map api caller to test if this can be used to gatter data_weather
+#
+# Swiss weather api caller and Kafka message producer
+#
+# Run the file directly on SourceHost01 with python3
+# To see if data correctly can be consumed use following confluent cli:
+# $ kafka_producer-console-consumer --bootstrap-server localhost:9092 --topic swiss_weather --from-beginning
+#
+# Thanks goes to the example from https://docs.confluent.io/4.0.0/clients/producer.html
 
-import os
+
 import http.client
 import json
 import time
@@ -11,9 +18,9 @@ from confluent_kafka import Producer
 import socket
 
 
-def open_weather_call(stationId):
+def open_weather_call(station_id):
     conn = http.client.HTTPConnection("")
-    r = requests.get("http://opendata.netcetera.com:80/smn/smn/" + str(stationId))
+    r = requests.get("http://opendata.netcetera.com:80/smn/smn/" + str(station_id))
     logging.info("Response: " + str(r.status_code) + " " + r.reason)
 
     data = r.json()  # This will return entire content.

@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
-### lightweight winsun api caller to test if this can be used to gatter solarlog data, store it and produce kafka_producer message
+#
+# Solarlog api caller and Kafka message producer
+#
+# Run the file directly on SourceHost01 with python3
+# To see if data correctly can be consumed use following confluent cli:
+# $ kafka_producer-console-consumer --bootstrap-server localhost:9092 --topic solarlog --from-beginning
+#
+# Thanks goes to the example from https://docs.confluent.io/4.0.0/clients/producer.html
 
-import os
+
 import http.client
 import json
 import time

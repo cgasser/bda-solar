@@ -21,6 +21,10 @@ Exp: /var/log/solarlog.log
 ## Data (/tmp/data/)
 In order to check the data which where collected we temporarily store them also on the SourceHost01 in /tmp/data/.
 
+## Test
+To see if the data arives in KAFKA use the following comand on SH-01 with the right topic
+
+$ kafka_producer-console-consumer --bootstrap-server localhost:9092 --topic <topic_name> --from-beginning
 
 ## Cronjop (crontab)
 In order to collect frequently new data (current) we have setup a cronjop to call the the python scripts:
