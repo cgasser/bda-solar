@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 ### lightweight open weather map api caller to test if this can be used to gatter data_weather
 
+import os, sys
 import http.client
 import json
 import time
@@ -8,6 +9,7 @@ import requests
 import logging
 from confluent_kafka import Producer
 import socket
+
 
 def open_weather_call(stationId,epoch_time):
     conn = http.client.HTTPConnection("")
@@ -47,7 +49,7 @@ def acked(err, msg):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='/home/claude/repo/bda-solar/log/solar_requests.log',
+    logging.basicConfig(filename='/var/log/swiss_weather.log',
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                         level=logging.DEBUG)
     epoch_time_now = str(round(time.time()))
@@ -58,7 +60,9 @@ if __name__ == "__main__":
     weather_data = open_weather_call(stationIdEinsiedeln,epoch_time_now)
 
     #Write to local store
-    with open('/home/claude/repo/bda-solar/data/data_weather/open_swiss_weather_'+ str(stationIdEinsiedeln) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
+    path = os.path.realpath('../data/data_weather')
+    logging.info("Write jsno to : " + path)
+    with open(path + '/open_swiss_weather_'+ str(stationIdEinsiedeln) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
         json.dump(weather_data, outfile, indent=4, ensure_ascii=False)
 
     #Write to KAFKA
