@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-### lightweight winsun api caller to test if this can be used to gatter solarlog data, store it and produce kafka message
+### lightweight open weather map api caller to test if this can be used to gatter data_weather
 
 import os
 import http.client
@@ -11,20 +11,19 @@ from confluent_kafka import Producer
 import socket
 
 
-def solar_log_call(epoch_time):
+def open_weather_call(appId,zipId):
     conn = http.client.HTTPConnection("")
-    r = requests.get("http://winsun.solarlog-web.ch/api?cid=" + pfadheimBaarCID + "&locale=de_ch&username=277555406&password=5a03cdf0a3ff42de09bc85361d8a2f0f&function=dashboard&format=jsonh&solarlog=9112&tiles=Yield|true,Grafic|true,Env|true,Weather|true&ctime=" + epoch_time)
+    r = requests.get("http://api.openweathermap.org/data/2.5/weather?zip="+ str(zipId) +",ch" +"&appid="+ appId)
     logging.info("Response: " + str(r.status_code) + " " + r.reason)
 
     data = r.json()  # This will return entire content.
-    data['timestamp'] = epoch_time
     logging.debug(data)
     conn.close()
     return data
 
 
 def kafka_produce(data):
-    topic = 'solarlog'
+    topic = 'open_weather'
     conf = {'bootstrap.servers': "localhost",
             'client.id': socket.gethostname(),
             'default.topic.config': {'acks': '1'}}
@@ -32,7 +31,7 @@ def kafka_produce(data):
     logging.info("Confluent Message config client.id: " + socket.gethostname())
     producer = Producer(conf)
 
-    logging.info("Write message to topic : " + str(topic))
+    logging.info("Send message to topic : " + str(topic))
     logging.debug("Write message json" + str(data))
     producer.produce(topic, str(data), callback=acked)
 
@@ -49,22 +48,22 @@ def acked(err, msg):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='/var/log/solarlog.log',
+    logging.basicConfig(filename='/var/log/sopen_weather.log',
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                         level=logging.INFO)
-
     epoch_time_now = str(round(time.time()))
+    logging.info("Start API call Open Swiss Weather Map at Time: " + epoch_time_now)
 
-    # Call Solarlog api to get Data
-    logging.info("Start API call Pfadiheim Baar at Time: " + epoch_time_now)
-    pfadheimBaarCID = "51769"
-    solar_data = solar_log_call(epoch_time_now)
+    # Call open Weather api to get Data
+    apiKey = "01638bd216e99ac31b6b81973d2adc08"
+    zip = 6340
+    weather_data = open_weather_call(apiKey,zip)
 
     # Write to local store
-    path = os.path.realpath('../data/data_solarlog')
-    logging.info("Write JSON to : " + path)
-    with open(path + '/pfadibaar_solarlog_' + str(pfadheimBaarCID) + '_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
-        json.dump(solar_data, outfile, indent=4, ensure_ascii=False)
+    path = os.path.realpath('../data/data_open_weather')
+    logging.info("Write jsno to : " + path)
+    with open(path + '/open_swiss_weather_'+ str(zip) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
+        json.dump(weather_data, outfile, indent=4, ensure_ascii=False)
 
     # Write to KAFKA
-    kafka_produce(solar_data)
+    kafka_produce(weather_data)
