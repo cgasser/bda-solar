@@ -14,11 +14,15 @@ The following topic are written for the different sources:
 - topic: swiss_weather
 - topic: open_weather
 
-## Logs
+## Logs (/var/log/)
 Every caller_producer has a log file with the name of the kafka topic in /var/logs.
 Exp: /var/log/solarlog.log
 
-## Cronjop
+## Data (/tmp/data/)
+In order to check the data which where collected we temporarily store them also on the SourceHost01 in /tmp/data/.
+
+
+## Cronjop (crontab)
 In order to collect frequently new data (current) we have setup a cronjop to call the the python scripts:
 
 - caller_producer_solarlog_pfadiheim_baar.py for SOLARLOG
@@ -27,3 +31,5 @@ In order to collect frequently new data (current) we have setup a cronjop to cal
 
 ### Settings on SH-01
 To see or change the crontab configs just use 'crontab -e' in on the SH-01 terminal with user bda.
+In order to work the python scripts need to be executable for crontab. 
+Use the command '' to do so.

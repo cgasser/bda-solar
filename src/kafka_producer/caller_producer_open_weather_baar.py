@@ -2,6 +2,7 @@
 ### lightweight open weather map api caller to test if this can be used to gatter data_weather
 
 import os
+import getpass
 import http.client
 import json
 import time
@@ -60,7 +61,8 @@ if __name__ == "__main__":
     weather_data = open_weather_call(apiKey,zip)
 
     # Write to local store
-    path = os.path.realpath('../data/data_open_weather')
+    #path = os.path.realpath('../data/data_open_weather')
+    path = '/tmp/data'
     logging.info("Write jsno to : " + path)
     with open(path + '/open_swiss_weather_'+ str(zip) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
         json.dump(weather_data, outfile, indent=4, ensure_ascii=False)
