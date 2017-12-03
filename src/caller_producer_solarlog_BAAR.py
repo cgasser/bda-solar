@@ -32,8 +32,8 @@ def kafka_produce(data):
     logging.info("Confluent Message config client.id: " + socket.gethostname())
     producer = Producer(conf)
 
-    logging.info("Send Message to topic : " + str(topic))
-    logging.debug("Write Message json" + str(data))
+    logging.info("Write message to topic : " + str(topic))
+    logging.debug("Write message json" + str(data))
     producer.produce(topic, str(data), callback=acked)
 
     # Wait up to 1 second for events. Callbacks will be invoked during
@@ -51,7 +51,7 @@ def acked(err, msg):
 if __name__ == "__main__":
     logging.basicConfig(filename='/var/log/solarlog.log',
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                        level=logging.DEBUG)
+                        level=logging.INFO)
 
     epoch_time_now = str(round(time.time()))
 
