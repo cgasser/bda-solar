@@ -64,7 +64,7 @@ if __name__ == "__main__":
     #path = os.path.realpath('../data/data_open_weather')
     path = '/tmp/data'
     logging.info("Write jsno to : " + path)
-    with open(path + '/open_swiss_weather_'+ str(zip) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
+    with open(path + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
         json.dump(weather_data, outfile, indent=4, ensure_ascii=False)
 
     # Write to KAFKA
