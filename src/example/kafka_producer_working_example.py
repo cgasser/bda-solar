@@ -1,11 +1,17 @@
 #!/usr/bin/env python3
-# easy example for a Python Producer
+#
+# Easy example for a Python Producer.
+# Run the file directly on SourceHost01 with python3
+# To see if data correctly can be consumed use following confluent cli:
+# $ kafka_producer-console-consumer --bootstrap-server localhost:9092 --topic myTopic --from-beginning
+#
 # Thanks goes to the example from https://docs.confluent.io/4.0.0/clients/producer.html
 
 from confluent_kafka import Producer
 from datetime import datetime
 import socket
 import logging
+import json
 
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
@@ -29,6 +35,8 @@ if __name__ == "__main__":
 
     logging.info("Confluent Message config client.id: " + socket.gethostname())
     producer = Producer(conf)
+
+    _data = json.load('../pfadibaar_solarlog_1509887838.json')
 
     logging.info("Send Message: " + str(message))
     producer.produce(topic, str(message), callback=acked)
