@@ -24,7 +24,10 @@ In order to check the data which where collected we temporarily store them also 
 ## Test
 To see if the data arives in KAFKA use the following comand on SH-01 with the right topic
 
-$ kafka_producer-console-consumer --bootstrap-server localhost:9092 --topic <topic_name> --from-beginning
+$ cd /etc/
+$ kafka-console-consumer --bootstrap-server localhost:9092 --topic <topic_name> --from-beginning
+
+Exp: for <topic_name> = solarlog
 
 ## Cronjop (crontab)
 In order to collect frequently new data (current) we have setup a cronjop to call the the python scripts:
