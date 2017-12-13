@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-### lightweight winsun api caller to test if this can be used to gatter data_weather
+### lightweight solarlog api polling script to collect pv-data
 
 import http.client
 import json
