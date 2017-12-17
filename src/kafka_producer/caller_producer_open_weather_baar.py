@@ -74,7 +74,7 @@ if __name__ == "__main__":
         json.dump(weather_data, outfile, indent=4, ensure_ascii=False)
 
     #write the same data as .csv since it is more easy to handel with hdfs..
-    with open('path' + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.csv', 'w') as f:
+    with open(path + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.csv', 'w') as f:
         w = csv.DictWriter(f, weather_data.keys())
         w.writeheader()
         w.writerow(weather_data)
