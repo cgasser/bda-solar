@@ -17,8 +17,16 @@ def solarLog_call(epoch_time):
     data = r.json()  # This will return entire content.
     data['timestamp'] = epoch_time
     logging.debug(data)
+
+    #write data to .json
     with open('/home/claude/repo/bda-solar/data/data_timestamp/pfadibaar_solarlog_' + epoch_time + '.json', 'w', encoding='utf-8') as outfile:
         json.dump(data, outfile, indent=4, ensure_ascii=False)
+
+    #write the same data as .csv since it is more easy to handel with hdfs..
+    with open('/home/claude/repo/bda-solar/data/data_timestamp/pfadibaar_solarlog_' + epoch_time + '.csv', 'w') as f:  # Just use 'w' mode in 3.x
+        w = csv.DictWriter(f, data.keys())
+        w.writeheader()
+        w.writerow(data)
 
     conn.close()
 

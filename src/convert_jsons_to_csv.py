@@ -31,7 +31,7 @@ def read_single_json(json_file):
 
 if __name__ == "__main__":
     #create Dataframe
-    data = read_single_json('/home/claude/repo/bda-solar/data/data_timestamp/pfadibaar_solarlog_1509887838.json')
+    data = read_single_json('/home/claude/repo/bda-solar/data/data_timestamp/pfadibaar_solarlog_1509887998.json')
     df = pd.DataFrame.from_records(data)
     #Load Dataframe
     dataframe = read_multiple_json(df, '/home/claude/repo/bda-solar/data/data_timestamp')

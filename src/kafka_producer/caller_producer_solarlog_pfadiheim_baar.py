@@ -10,7 +10,7 @@
 
 
 import http.client
-import json
+import json, csv
 import time
 import requests
 import logging
@@ -69,9 +69,15 @@ if __name__ == "__main__":
 
     # Write to local store
     path = '/home/bda/data'
-    logging.info("Write JSON to : " + path)
+    logging.info("Write JSON and CSV to : " + path)
     with open(path + '/solarlog_' + str(pfadheimBaarCID) + '_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
         json.dump(solar_data, outfile, indent=4, ensure_ascii=False)
+
+    #write the same data as .csv since it is more easy to handel with hdfs..
+    with open(path + '/solarlog_' + str(pfadheimBaarCID) + '_' + epoch_time_now + '.csv', 'w') as f:
+        w = csv.DictWriter(f, solar_data.keys())
+        w.writeheader()
+        w.writerow(solar_data)
 
     # Write to KAFKA
     kafka_produce(solar_data)

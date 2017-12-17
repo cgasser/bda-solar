@@ -10,7 +10,7 @@
 
 
 import http.client
-import json
+import json, csv
 import time
 import requests
 import logging
@@ -68,10 +68,16 @@ if __name__ == "__main__":
 
     # Write to local store
     path = '/home/bda/data'
-    logging.info("Write jsno to : " + path)
+    logging.info("Write json and csv to : " + path)
 
     with open(path + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
         json.dump(weather_data, outfile, indent=4, ensure_ascii=False)
+
+    #write the same data as .csv since it is more easy to handel with hdfs..
+    with open('path' + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.csv', 'w') as f:
+        w = csv.DictWriter(f, weather_data.keys())
+        w.writeheader()
+        w.writerow(weather_data)
 
     # Write to KAFKA
     kafka_produce(weather_data)
