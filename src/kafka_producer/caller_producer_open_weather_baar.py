@@ -24,6 +24,11 @@ def open_weather_call(app_id, zip_id):
     logging.info("Response: " + str(r.status_code) + " " + r.reason)
 
     data = r.json()  # This will return entire content.
+    # Remove key's in order to clean data from complex JSON structure and wrong syntax
+    del data['cur_production_per_wrid']
+    del data['invEnergyType']
+    del data['decimalseperator']
+
     logging.debug(data)
     conn.close()
     return data

@@ -16,6 +16,10 @@ def solarLog_call(epoch_time):
 
     data = r.json()  # This will return entire content.
     data['timestamp'] = epoch_time
+    # Remove key's with complex JSON structure
+    del data['cur_production_per_wrid']
+    del data['invEnergyType']
+    del data['decimalseperator']
     logging.debug(data)
 
     #write data to .json
