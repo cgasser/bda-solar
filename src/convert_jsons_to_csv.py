@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os, json
+import os, json,csv
 from pandas.io.json import json_normalize
 import pandas as pd
 
@@ -38,4 +38,4 @@ if __name__ == "__main__":
     print(dataframe.describe())
     #df['cur_yield_watt '].hist(by=df['timestamp'])
     dataframe.cur_yield_watt.hist()
-    dataframe.to_csv('/home/claude/repo/bda-solar/data/temp/converted_solarlog.csv')
+    dataframe.to_csv('/home/claude/repo/bda-solar/data/temp/converted_solarlog_v4.csv', sep='\t')
