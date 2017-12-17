@@ -67,7 +67,7 @@ if __name__ == "__main__":
     weather_data = open_weather_call(apiKey,zip)
 
     # Write to local store
-    path = '/tmp/data'
+    path = '/home/bda/data'
     logging.info("Write jsno to : " + path)
 
     with open(path + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
