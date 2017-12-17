@@ -19,7 +19,7 @@ def solarLog_call(epoch_time):
     # Remove key's with complex JSON structure
     del data['cur_production_per_wrid']
     del data['invEnergyType']
-    del data['decimalseperator']
+    #del data['decimalseperator']
     logging.debug(data)
 
     #write data to .json
@@ -28,7 +28,7 @@ def solarLog_call(epoch_time):
 
     #write the same data as .csv since it is more easy to handel with hdfs..
     with open('/home/claude/repo/bda-solar/data/data_timestamp/pfadibaar_solarlog_' + epoch_time + '.csv', 'w') as f:  # Just use 'w' mode in 3.x
-        w = csv.DictWriter(f, data.keys())
+        w = csv.DictWriter(f, data.keys(), dialect=csv.excel_tab)
         w.writeheader()
         w.writerow(data)
 

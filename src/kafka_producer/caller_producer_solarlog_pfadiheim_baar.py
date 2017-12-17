@@ -80,7 +80,7 @@ if __name__ == "__main__":
 
     #write the same data as .csv since it is more easy to handel with hdfs..
     with open(path + '/solarlog_' + str(pfadheimBaarCID) + '_' + epoch_time_now + '.csv', 'w') as f:
-        w = csv.DictWriter(f, solar_data.keys())
+        w = csv.DictWriter(f, solar_data.keys(), dialect=csv.excel_tab)
         w.writeheader()
         w.writerow(solar_data)
 
