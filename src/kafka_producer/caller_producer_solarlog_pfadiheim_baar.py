@@ -27,7 +27,6 @@ def solar_log_call(epoch_time):
     # Remove key's in order to clean data from complex JSON structure and wrong syntax
     del data['cur_production_per_wrid']
     del data['invEnergyType']
-    del data['decimalseperator']
     # Add timestamp to the daty
     data['timestamp'] = epoch_time
     logging.debug(data)
