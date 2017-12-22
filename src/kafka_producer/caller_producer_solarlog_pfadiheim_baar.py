@@ -17,6 +17,7 @@ import logging
 from confluent_kafka import Producer
 import socket
 from hdfs import InsecureClient
+import collections
 
 
 def solar_log_call(epoch_time):
@@ -30,9 +31,10 @@ def solar_log_call(epoch_time):
     del data['invEnergyType']
     # Add timestamp to the daty
     data['timestamp'] = epoch_time
-    logging.debug(data)
+    sorted_data = collections.OrderedDict(sorted(data.items()))
+    logging.debug(sorted_data)
     conn.close()
-    return data
+    return sorted_data
 
 
 def kafka_produce(data):
