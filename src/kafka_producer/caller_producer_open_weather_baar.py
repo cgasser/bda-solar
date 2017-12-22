@@ -18,6 +18,7 @@ import logging
 from confluent_kafka import Producer
 import socket
 from hdfs import InsecureClient
+import collections
 
 
 def open_weather_call(app_id, zip_id):
@@ -27,10 +28,10 @@ def open_weather_call(app_id, zip_id):
 
     data = r.json()  # This will return entire content.
     # Remove key's in order to clean data from complex JSON structure and wrong syntax
-
-    logging.debug(data)
+    sorted_data = collections.OrderedDict(sorted(data.items()))
+    logging.debug(sorted_data)
     conn.close()
-    return data
+    return sorted_data
 
 
 def kafka_produce(data):
