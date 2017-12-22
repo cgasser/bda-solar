@@ -10,7 +10,8 @@
 
 
 import http.client
-import json, csv
+import json
+import csv
 import time
 import requests
 import logging
@@ -57,7 +58,7 @@ def acked(err, msg):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='/var/log/sopen_weather.log',
+    logging.basicConfig(filename='/var/log/open_weather.log',
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
                         level=logging.INFO)
     epoch_time_now = str(round(time.time()))
@@ -66,7 +67,7 @@ if __name__ == "__main__":
     # Call open Weather api to get Data
     apiKey = "01638bd216e99ac31b6b81973d2adc08"
     zip = 6340
-    weather_data = open_weather_call(apiKey,zip)
+    weather_data = open_weather_call(apiKey, zip)
 
     # Write to local store
     path = '/home/bda/data'
