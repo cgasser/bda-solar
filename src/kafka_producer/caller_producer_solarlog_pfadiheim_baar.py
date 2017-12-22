@@ -16,6 +16,7 @@ import requests
 import logging
 from confluent_kafka import Producer
 import socket
+from hdfs import InsecureClient
 
 
 def solar_log_call(epoch_time):
@@ -82,6 +83,14 @@ if __name__ == "__main__":
         w = csv.DictWriter(f, solar_data.keys(), dialect=csv.excel_tab)
         w.writeheader()
         w.writerow(solar_data)
+
+    # write data to hdfs
+    client = InsecureClient('http://nh-01.ip-plus.net:50070', user='hdfs')
+    with client.write(path + '/solarlog_' + str(pfadheimBaarCID) + '_' + epoch_time_now + '.csv', encoding='utf-8', delimiter='\n') as writer:
+        w = csv.DictWriter(writer, solar_data.keys(), dialect=csv.excel_tab)
+        w.writeheader()
+        w.writerow(solar_data)
+
 
     # Write to KAFKA
     kafka_produce(solar_data)
