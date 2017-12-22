@@ -16,6 +16,7 @@ import requests
 import logging
 from confluent_kafka import Producer
 import socket
+from hdfs import InsecureClient
 
 
 def open_weather_call(station_id):
@@ -76,6 +77,14 @@ if __name__ == "__main__":
     #write the same data as .csv since it is more easy to handel with hdfs..
     with open(path + '/swiss_weather_'+ str(stationIdEinsiedeln) +'_' + epoch_time_now + '.csv', 'w') as f:
         w = csv.DictWriter(f, weather_data.keys(), dialect=csv.excel_tab)
+        w.writeheader()
+        w.writerow(weather_data)
+
+    # write data to hdfs
+    logging.info("Write csv to hdfs : /data/swiss_weather/")
+    client = InsecureClient('http://nh-01.ip-plus.net:50070', user='hdfs')
+    with client.write('/data/swiss_weather/swiss_weather_'+ str(stationIdEinsiedeln) +'_' + epoch_time_now + '.csv', encoding='utf-8') as writer:
+        w = csv.DictWriter(writer, weather_data.keys(), dialect=csv.excel_tab)
         w.writeheader()
         w.writerow(weather_data)
 
