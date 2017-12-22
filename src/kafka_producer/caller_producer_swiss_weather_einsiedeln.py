@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     # Write to local store
     path = '/home/bda/data'
-    logging.info("Write jsno to : " + path)
+    logging.info("Write JSON to : " + path)
     with open(path + '/swiss_weather_'+ str(stationIdEinsiedeln) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
         json.dump(weather_data, outfile, indent=4, ensure_ascii=False)
 

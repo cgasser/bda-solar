@@ -60,9 +60,9 @@ def acked(err, msg):
 if __name__ == "__main__":
     logging.basicConfig(filename='/var/log/open_weather.log',
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                        level=logging.INFO)
+                        level=logging.DEBUG)
     epoch_time_now = str(round(time.time()))
-    logging.info("Start API call Open Swiss Weather Map at Time: " + epoch_time_now)
+    logging.info("Start API call Open Weather Map at Time: " + epoch_time_now)
 
     # Call open Weather api to get Data
     apiKey = "01638bd216e99ac31b6b81973d2adc08"
