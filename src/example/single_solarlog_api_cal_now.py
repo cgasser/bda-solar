@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-### lightweight winsun api caller to test if this can be used to gatter data_weather
+### lightweight solarlog api polling script to collect pv-data
 
 import http.client
 import json
 import time
+import csv
 import requests
 import logging
 
@@ -18,6 +19,7 @@ def solarLog_call(epoch_time):
     logging.debug(data)
     with open('/home/claude/repo/bda-solar/data/data_timestamp/pfadibaar_solarlog_' + epoch_time + '.json', 'w', encoding='utf-8') as outfile:
         json.dump(data, outfile, indent=4, ensure_ascii=False)
+
     conn.close()
 
 if __name__ == "__main__":

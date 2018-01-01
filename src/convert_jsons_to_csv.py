@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os, json
+import os, json,csv
 from pandas.io.json import json_normalize
 import pandas as pd
 
@@ -31,11 +31,11 @@ def read_single_json(json_file):
 
 if __name__ == "__main__":
     #create Dataframe
-    data = read_single_json('/home/claude/PycharmProjects/pv/data_timestamp/pfadibaar_solarlog_1509887838.json')
+    data = read_single_json('/home/claude/repo/bda-solar/data/data_timestamp/pfadibaar_solarlog_1509887998.json')
     df = pd.DataFrame.from_records(data)
     #Load Dataframe
-    dataframe = read_multiple_json(df, '/home/claude/PycharmProjects/pv/data_timestamp')
+    dataframe = read_multiple_json(df, '/home/claude/repo/bda-solar/data/data_timestamp')
     print(dataframe.describe())
     #df['cur_yield_watt '].hist(by=df['timestamp'])
     dataframe.cur_yield_watt.hist()
-    #dataframe.to_csv('/home/claude/PycharmProjects/pv/temp/test.csv')
+    dataframe.to_csv('/home/claude/repo/bda-solar/data/temp/converted_solarlog_v4.csv', sep='\t')

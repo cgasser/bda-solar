@@ -13,7 +13,7 @@ The following topic are written for the different sources:
 - topic: solarlog
 - topic: swiss_weather
 - topic: open_weather
-
+# How to use
 ## Logs (/var/log/)
 Every caller_producer has a log file with the name of the kafka topic in /var/logs.
 Exp: /var/log/solarlog.log
@@ -22,7 +22,7 @@ Exp: /var/log/solarlog.log
 In order to check the data which where collected we temporarily store them also on the SourceHost01 in /tmp/data/.
 
 ## Test
-To see if the data arives in KAFKA use the following comand on SH-01 with the right topic
+To see if the data arrives in KAFKA use the following comand on SH-01 with the right topic
 ````
 $ cd /etc/
 $ kafka-console-consumer --bootstrap-server localhost:9092 --topic <topic_name> --from-beginning
@@ -30,14 +30,17 @@ $ kafka-console-consumer --bootstrap-server localhost:9092 --topic <topic_name> 
 
 Exp: for <topic_name> = solarlog
 
-## Cronjop (crontab)
+## Cronjob (crontab)
 In order to collect frequently new data (current) we have setup a cronjop to call the the python scripts:
 
 - caller_producer_solarlog_pfadiheim_baar.py for SOLARLOG
 - caller_producer_swiss_weather_einsiedeln.py for Swiss Weather
 - caller_producer_open_weather_baa from Open Weather
+# How to setup
+## Kafka Confluent
+See quickstart here: https://docs.confluent.io/current/quickstart.html
 
-### Settings on SH-01
+## Cronjob on SH-01
 To see or change the crontab configs just use 'crontab -e' in on the SH-01 terminal with user bda.
 In order to work the python scripts need to be executable for crontab. 
 Use the command '' to do so.

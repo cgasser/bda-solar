@@ -11,11 +11,14 @@
 
 import http.client
 import json
+import csv
 import time
 import requests
 import logging
 from confluent_kafka import Producer
 import socket
+from hdfs import InsecureClient
+import collections
 
 
 def open_weather_call(app_id, zip_id):
@@ -24,9 +27,11 @@ def open_weather_call(app_id, zip_id):
     logging.info("Response: " + str(r.status_code) + " " + r.reason)
 
     data = r.json()  # This will return entire content.
-    logging.debug(data)
+    # Remove key's in order to clean data from complex JSON structure and wrong syntax
+    sorted_data = collections.OrderedDict(sorted(data.items()))
+    logging.debug(sorted_data)
     conn.close()
-    return data
+    return sorted_data
 
 
 def kafka_produce(data):
@@ -55,23 +60,37 @@ def acked(err, msg):
 
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='/var/log/sopen_weather.log',
+    logging.basicConfig(filename='/var/log/open_weather.log',
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                        level=logging.INFO)
+                        level=logging.DEBUG)
     epoch_time_now = str(round(time.time()))
-    logging.info("Start API call Open Swiss Weather Map at Time: " + epoch_time_now)
+    logging.info("Start API call Open Weather Map at Time: " + epoch_time_now)
 
     # Call open Weather api to get Data
     apiKey = "01638bd216e99ac31b6b81973d2adc08"
     zip = 6340
-    weather_data = open_weather_call(apiKey,zip)
+    weather_data = open_weather_call(apiKey, zip)
 
     # Write to local store
-    path = '/tmp/data'
-    logging.info("Write jsno to : " + path)
+    path = '/home/bda/data'
+    logging.info("Write json and csv to : " + path)
 
     with open(path + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
         json.dump(weather_data, outfile, indent=4, ensure_ascii=False)
+
+    #write the same data as .csv since it is more easy to handel with hdfs..
+    with open(path + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.csv', 'w') as f:
+        w = csv.DictWriter(f, weather_data.keys(), dialect=csv.excel_tab)
+        w.writeheader()
+        w.writerow(weather_data)
+
+    # write data to hdfs
+    logging.info("Write csv to hdfs : /data/open_weather/")
+    client = InsecureClient('http://nh-01.ip-plus.net:50070', user='hdfs')
+    with client.write('/data/open_weather/open_weather_'+ str(zip) +'_' + epoch_time_now + '.csv', encoding='utf-8') as writer:
+        w = csv.DictWriter(writer, weather_data.keys(), dialect=csv.excel_tab)
+        w.writeheader()
+        w.writerow(weather_data)
 
     # Write to KAFKA
     kafka_produce(weather_data)

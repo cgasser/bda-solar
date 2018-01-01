@@ -10,12 +10,14 @@
 
 
 import http.client
-import json
+import json, csv
 import time
 import requests
 import logging
 from confluent_kafka import Producer
 import socket
+from hdfs import InsecureClient
+import collections
 
 
 def solar_log_call(epoch_time):
@@ -24,10 +26,15 @@ def solar_log_call(epoch_time):
     logging.info("Response: " + str(r.status_code) + " " + r.reason)
 
     data = r.json()  # This will return entire content.
+    # Remove key's in order to clean data from complex JSON structure and wrong syntax
+    del data['cur_production_per_wrid']
+    del data['invEnergyType']
+    # Add timestamp to the daty
     data['timestamp'] = epoch_time
-    logging.debug(data)
+    sorted_data = collections.OrderedDict(sorted(data.items()))
+    logging.debug(sorted_data)
     conn.close()
-    return data
+    return sorted_data
 
 
 def kafka_produce(data):
@@ -68,10 +75,26 @@ if __name__ == "__main__":
     solar_data = solar_log_call(epoch_time_now)
 
     # Write to local store
-    path = '/tmp/data'
-    logging.info("Write JSON to : " + path)
+    path = '/home/bda/data'
+    logging.info("Write JSON and CSV to : " + path)
     with open(path + '/solarlog_' + str(pfadheimBaarCID) + '_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
         json.dump(solar_data, outfile, indent=4, ensure_ascii=False)
+
+    #write the same data as .csv since it is more easy to handel with hdfs..
+    with open(path + '/solarlog_' + str(pfadheimBaarCID) + '_' + epoch_time_now + '.csv', 'w') as f:
+        w = csv.DictWriter(f, solar_data.keys(), dialect=csv.excel_tab)
+        w.writeheader()
+        w.writerow(solar_data)
+
+
+    # write data to hdfs
+    logging.info("Write csv to hdfs : /data/solarlog/")
+    client = InsecureClient('http://nh-01.ip-plus.net:50070', user='hdfs')
+    with client.write('/data/solarlog/solarlog_' + str(pfadheimBaarCID) + '_' + epoch_time_now + '.csv', encoding='utf-8') as writer:
+        w = csv.DictWriter(writer, solar_data.keys(), dialect=csv.excel_tab)
+        w.writeheader()
+        w.writerow(solar_data)
+
 
     # Write to KAFKA
     kafka_produce(solar_data)
