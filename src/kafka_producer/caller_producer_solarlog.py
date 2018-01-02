@@ -74,7 +74,8 @@ if __name__ == "__main__":
     # List of all sites to collect
     pfadheimBaarCID = "51769"
     pv_sites = {'51769': 'Pfadiheim Baar'
-                , '26678': 'Winsun AG Steg'}
+                , '26678': 'Winsun AG, Steg'
+                , '54349': 'Meyer Rolf, Baar'}
 
     for site_id in pv_sites:
         logging.info("Start API call  at Time: " + epoch_time_now)
