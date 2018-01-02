@@ -20,9 +20,9 @@ from hdfs import InsecureClient
 import collections
 
 
-def solar_log_call(epoch_time):
+def solar_log_call(epoch_time, id):
     conn = http.client.HTTPConnection("")
-    r = requests.get("http://winsun.solarlog-web.ch/api?cid=" + pfadheimBaarCID + "&locale=de_ch&username=277555406&password=5a03cdf0a3ff42de09bc85361d8a2f0f&function=dashboard&format=jsonh&solarlog=9112&tiles=Yield|true,Grafic|true,Env|true,Weather|true&ctime=" + epoch_time)
+    r = requests.get("http://winsun.solarlog-web.ch/api?cid=" + id + "&locale=de_ch&username=277555406&password=5a03cdf0a3ff42de09bc85361d8a2f0f&function=dashboard&format=jsonh&solarlog=9112&tiles=Yield|true,Grafic|true,Env|true,Weather|true&ctime=" + epoch_time)
     logging.info("Response: " + str(r.status_code) + " " + r.reason)
 
     data = r.json()  # This will return entire content.
@@ -70,30 +70,34 @@ if __name__ == "__main__":
     epoch_time_now = str(round(time.time()))
 
     # Call Solarlog api to get Data
-    logging.info("Start API call Pfadiheim Baar at Time: " + epoch_time_now)
+    # List of all sites to collect
     pfadheimBaarCID = "51769"
-    solar_data = solar_log_call(epoch_time_now)
+    pv_sites = {51769: 'Pfadiheim Baar'
+                , 26678: 'winsun AG'}
 
-    # Write to local store
-    path = '/home/bda/data'
-    logging.info("Write JSON and CSV to : " + path)
-    with open(path + '/solarlog_' + str(pfadheimBaarCID) + '_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
-        json.dump(solar_data, outfile, indent=4, ensure_ascii=False)
+    for site_id in pv_sites:
+        logging.info("Start API call  at Time: " + epoch_time_now)
+        solar_data = solar_log_call(epoch_time_now, site_id)
+        # Write to local store
+        path = '/home/bda/data'
+        logging.info("Write JSON and CSV to : " + path)
+        with open(path + '/solarlog_' + str(site_id) + '_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
+            json.dump(solar_data, outfile, indent=4, ensure_ascii=False)
 
-    #write the same data as .csv since it is more easy to handel with hdfs..
-    with open(path + '/solarlog_' + str(pfadheimBaarCID) + '_' + epoch_time_now + '.csv', 'w') as f:
-        w = csv.DictWriter(f, solar_data.keys(), dialect=csv.excel_tab)
-        w.writeheader()
-        w.writerow(solar_data)
+        #write the same data as .csv since it is more easy to handel with hdfs..
+        with open(path + '/solarlog_' + str(site_id) + '_' + epoch_time_now + '.csv', 'w') as f:
+            w = csv.DictWriter(f, solar_data.keys(), dialect=csv.excel_tab)
+            w.writeheader()
+            w.writerow(solar_data)
 
 
-    # write data to hdfs
-    logging.info("Write csv to hdfs : /data/solarlog/")
-    client = InsecureClient('http://nh-01.ip-plus.net:50070', user='hdfs')
-    with client.write('/data/solarlog/solarlog_' + str(pfadheimBaarCID) + '_' + epoch_time_now + '.csv', encoding='utf-8') as writer:
-        w = csv.DictWriter(writer, solar_data.keys(), dialect=csv.excel_tab)
-        w.writeheader()
-        w.writerow(solar_data)
+        # write data to hdfs
+        logging.info("Write csv to hdfs : /data/solarlog/")
+        client = InsecureClient('http://nh-01.ip-plus.net:50070', user='hdfs')
+        with client.write('/data/solarlog/solarlog_' + str(site_id) + '_' + epoch_time_now + '.csv', encoding='utf-8') as writer:
+            w = csv.DictWriter(writer, solar_data.keys(), dialect=csv.excel_tab)
+            w.writeheader()
+            w.writerow(solar_data)
 
 
     # Write to KAFKA
