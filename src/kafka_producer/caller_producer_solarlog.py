@@ -78,7 +78,7 @@ if __name__ == "__main__":
                 , '54349': 'Meyer Rolf, Baar'}
 
     for site_id in pv_sites:
-        logging.info("Start API call  at Time: " + epoch_time_now)
+        logging.info("Start API call for" + pv_sites[site_id] + "at Time: " + epoch_time_now)
         solar_data = solar_log_call(epoch_time_now, site_id, pv_sites[site_id] )
         # Write to local store
         path = '/home/bda/data'
