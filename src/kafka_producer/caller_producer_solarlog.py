@@ -20,7 +20,7 @@ from hdfs import InsecureClient
 import collections
 
 
-def solar_log_call(epoch_time, id):
+def solar_log_call(epoch_time, id, plantname):
     conn = http.client.HTTPConnection("")
     r = requests.get("http://winsun.solarlog-web.ch/api?cid=" + id + "&locale=de_ch&username=277555406&password=5a03cdf0a3ff42de09bc85361d8a2f0f&function=dashboard&format=jsonh&solarlog=9112&tiles=Yield|true,Grafic|true,Env|true,Weather|true&ctime=" + epoch_time)
     logging.info("Response: " + str(r.status_code) + " " + r.reason)
@@ -31,6 +31,7 @@ def solar_log_call(epoch_time, id):
     del data['invEnergyType']
     # Add timestamp to the daty
     data['timestamp'] = epoch_time
+    data['plantname'] = plantname
     sorted_data = collections.OrderedDict(sorted(data.items()))
     logging.debug(sorted_data)
     conn.close()
@@ -73,11 +74,11 @@ if __name__ == "__main__":
     # List of all sites to collect
     pfadheimBaarCID = "51769"
     pv_sites = {'51769': 'Pfadiheim Baar'
-                , '26678': 'winsun AG'}
+                , '26678': 'winsun AG, Steg'}
 
     for site_id in pv_sites:
         logging.info("Start API call  at Time: " + epoch_time_now)
-        solar_data = solar_log_call(epoch_time_now, site_id)
+        solar_data = solar_log_call(epoch_time_now, site_id, pv_sites[site_id] )
         # Write to local store
         path = '/home/bda/data'
         logging.info("Write JSON and CSV to : " + path)
