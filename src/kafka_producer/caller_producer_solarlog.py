@@ -32,6 +32,7 @@ def solar_log_call(epoch_time, id, plantname):
     # Add timestamp to the daty
     data['timestamp'] = epoch_time
     data['plantname'] = plantname
+    data['decimalseperator'] = ','
     sorted_data = collections.OrderedDict(sorted(data.items()))
     logging.debug(sorted_data)
     conn.close()
