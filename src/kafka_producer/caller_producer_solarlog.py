@@ -32,7 +32,10 @@ def solar_log_call(epoch_time, id, plantname):
     # Add timestamp to the daty
     data['timestamp'] = epoch_time
     data['plantname'] = plantname
-    data['decimalseperator'] = ','
+    if 'decimalseperator' not in data:
+        data['decimalseperator'] = ','
+    if 'curr_batt_power' not in data:
+        data['curr_batt_power'] = ''
     sorted_data = collections.OrderedDict(sorted(data.items()))
     logging.debug(sorted_data)
     conn.close()
@@ -55,7 +58,6 @@ def kafka_produce(data):
     # Wait up to 1 second for events. Callbacks will be invoked during
     # this method call if the message is acknowledged.
     producer.poll(1)
-
 
 def acked(err, msg):
     if err is not None:
