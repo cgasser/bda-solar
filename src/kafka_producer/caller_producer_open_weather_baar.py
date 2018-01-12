@@ -77,8 +77,8 @@ if __name__ == "__main__":
     path = '/home/bda/data'
     logging.info("Write json and csv to : " + path)
 
-    with open(path + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
-        json.dump(weather_data, outfile, indent=4, ensure_ascii=False)
+    #with open(path + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
+    #    json.dump(weather_data, outfile, indent=4, ensure_ascii=False)
 
     #write the same data as .csv since it is more easy to handel with hdfs..
     with open(path + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.csv', 'w') as f:
