@@ -76,10 +76,11 @@ if __name__ == "__main__":
     # Call Solarlog api to get Data
     # List of all sites to collect
     pfadheimBaarCID = "51769"
-    pv_sites = {'51769': 'Pfadiheim Baar'
-                , '26678': 'Winsun AG, Steg'
-                , '54349': 'Meyer Rolf, Baar'
-                , '48542':'Himmelrichstrasse 1ab, Baar'}
+    pv_sites = {  '51769':  'Pfadiheim Baar'
+                , '26678':  'Winsun AG, Steg'
+                , '54349':  'Meyer Rolf, Baar'
+                , '48542':  'Himmelrichstrasse 1ab, Baar'
+                , '55610':  'Betschart René, Steinhausen'}
 
     for site_id in pv_sites:
         logging.info("Start API call for" + pv_sites[site_id] + "at Time: " + epoch_time_now)
