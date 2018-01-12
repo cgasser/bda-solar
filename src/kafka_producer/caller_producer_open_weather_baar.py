@@ -30,7 +30,7 @@ def open_weather_call(app_id, zip_id):
     data = r.json()  # This will return entire content.
     # Remove key's in order to clean data from complex JSON structure and wrong syntax
     sorted_data = collections.OrderedDict(sorted(data.items()))
-    sorted_data = pd.io.json.json_normalize(sorted_data)
+    # sorted_data = pd.io.json.json_normalize(sorted_data)
     logging.debug(sorted_data)
     conn.close()
     return sorted_data
@@ -77,8 +77,8 @@ if __name__ == "__main__":
     path = '/home/bda/data'
     logging.info("Write json and csv to : " + path)
 
-    #with open(path + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
-    #    json.dump(weather_data, outfile, indent=4, ensure_ascii=False)
+    with open(path + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.json', 'w', encoding='utf-8') as outfile:
+        json.dump(weather_data, outfile, indent=4, ensure_ascii=False)
 
     #write the same data as .csv since it is more easy to handel with hdfs..
     with open(path + '/open_weather_'+ str(zip) +'_' + epoch_time_now + '.csv', 'w') as f:
