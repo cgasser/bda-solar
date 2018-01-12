@@ -91,8 +91,8 @@ if __name__ == "__main__":
     client = InsecureClient('http://nh-01.ip-plus.net:50070', user='hdfs')
     with client.write('/data/open_weather/open_weather_'+ str(zip) +'_' + epoch_time_now + '.csv', encoding='utf-8') as writer:
         w = csv.DictWriter(writer, weather_data.keys(), dialect=csv.excel_tab)
-        #w.writeheader()
-        w.writerow(weather_data.to_csv())
+        w.writeheader()
+        w.writerow(weather_data)
 
     # Write to KAFKA
     kafka_produce(weather_data)
