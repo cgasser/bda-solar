@@ -51,6 +51,7 @@ plot_ly(out.df, x=~time, y=~obs, type = "scatter", mode = 'lines')
 # install.packages("fpp")
 library(fpp)
 data(ausbeer) # data are part of the package
+plot(ausbeer)
 timeserie_beer = tail(head(ausbeer, 17*4+2),17*4-4)
 plot(as.ts(timeserie_beer))
 

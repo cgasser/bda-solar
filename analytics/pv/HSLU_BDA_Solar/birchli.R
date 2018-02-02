@@ -11,12 +11,17 @@ library(ggplot2)
 # install.package(plotly)
 library(plotly)
 
+library(lubridate)
+library(tseries)
+library(zoo)
+
 # Set the time zone at the system level
 Sys.setenv(TZ="Europe/Zurich")
 
 
 ########## Birchli
 ########## Daten (raw): Google Drive\CAS_BDA7\Daten\PV_Birchli_29_10_2017\SBEAM
+########## Missing data 2015-10-10..2016-02-29
 
 dt <- fread("data/birchli.csv")
 
@@ -34,43 +39,97 @@ class(dt$timestampPosix)
 class(dt$power1)
 class(dt$power2)
 
-# create a dataframe per panel
-dfRaw1 <- data.frame(dt$timestampPosix, dt$power1)
-dfRaw2 <- data.frame(dt$timestampPosix, dt$power2)
-colnames(dfRaw1) <- c("time", "power")
-colnames(dfRaw2) <- c("time", "power")
+# select panel
+currentAttribute <- dt$power1
+#currentAttribute <- dt$power2
+
+# create a dataframe
+dfRaw <- data.frame(dt$timestampPosix, currentAttribute)
+colnames(dfRaw) <- c("time", "power")
 
 # filter outliers
-df1 <- dfRaw1[dfRaw1$power < 3,]
-df2 <- dfRaw2[dfRaw2$power < 3,]
-colnames(df1) <- c("time", "power")
-colnames(df2) <- c("time", "power")
+df <- dfRaw[dfRaw$power < 3,]
+colnames(df) <- c("time", "power")
+
+# filter for complete months
+startDate <- ymd_hms("2010-12-01 00:00:00")
+endDate <- ymd_hms("2017-10-01 00:00:00")
+#startDate <- ymd_hms("2011-01-01 00:00:00")
+#endDate <- ymd_hms("2015-01-01 00:00:00")
+
+df <- subset(df, df$time >= startDate)
+df <- subset(df, df$time < endDate)
 
 ### POWER
 
-# Visualize the time power curve along time
-plot_ly(data = df1, x=~time, y=~power, type = "scatter", mode = "lines+markers", line=list(color="darkgreen"))
-plot_ly(data = df2, x=~time, y=~power, type = "scatter", mode = "lines+markers", line=list(color="green"))
+# Visualize the power curve along time
+plot_ly(data = df, x=~time, y=~power, type = "scatter", mode = "lines+markers", line=list(color="darkgreen"))
 
 ### ENERGY
 
 # add a date column
-df1$date <- as.Date(df1$time)
-df2$date <- as.Date(df2$time)
+df$date <- as.Date(df$time)
+df$month <- as.Date(format(df$time, "%Y-%m-01"), format = "%Y-%m-%d")
+class(df$date)
 
 # sum up the 10-min power values per day to obtain a proxy value for the energy produced
-dfDays1 <- aggregate(list(energy = df1$power), by = list(date = df1$date), FUN = sum)
-dfDays2 <- aggregate(list(energy = df2$power), by = list(date = df2$date), FUN = sum)
-plot(dfDays1)
-plot(dfDays2)
+dfDays <- aggregate(list(energy = df$power), by = list(date = df$date), FUN = sum)
+dfMonths <- aggregate(list(energy = df$power), by = list(date = df$month), FUN = sum)
+
+# filter out zero days
+dfDays <- dfDays[dfDays$energy > 0,]
+dfMonths <- dfMonths[dfMonths$energy > 0,]
+
+# visualize the energy per day along time
+plot(dfDays)
+plot(dfMonths)
 
 # Additive Time Series
 # definition ts: data which has been sampled at equispaced points in time
-# use a frequency of 365 since the data contains one sample per day and is expected to repeat every year
-tsEnergyPerDay1 <- ts(dfDays1, frequency = 365)
-decomposeEnergy1 <- decompose(tsEnergyPerDay1, "additive")
+# per day: use a frequency of 365 since the data contains one sample per day and is expected to repeat every year
+tsEnergyPerDay <- ts(dfDays$energy, start = c(2010, 12), end = c(2015, 01), frequency = 365)
+time(tsEnergyPerDay)
+plot(tsEnergyPerDay)
+decomposeEnergy <- decompose(tsEnergyPerDay, "additive")
+# per month: use a frequency of 365 since the data contains one sample per day and is expected to repeat every year
+tsEnergyPerMonth <- ts(dfMonths$energy, start = c(2010, 12), frequency = 12)
+time(tsEnergyPerMonth)
+plot(tsEnergyPerMonth)
+decomposeEnergy <- decompose(tsEnergyPerMonth, "additive")
 
-plot(as.ts(decomposeEnergy1$seasonal))
-plot(as.ts(decomposeEnergy1$trend))
-plot(as.ts(decomposeEnergy1$random))
-plot(decomposeEnergy1)
+plot(as.ts(decomposeEnergy$seasonal))
+plot(as.ts(decomposeEnergy$trend))
+plot(as.ts(decomposeEnergy$random))
+plot(decomposeEnergy)
+
+
+# represent missing data as NA (2015-10-10..2016-02-29)
+# https://stackoverflow.com/questions/28689428/pad-data-frame-with-missing-dates-in-a-series
+
+missingDates <- data.frame(date = seq(from = as.Date("2015-10-11"), to = as.Date("2016-03-01"), by = "day"))
+# add a date column
+missingDates$energy <- NA
+
+# concatenate data with missing dates containing NA as energy value
+dfFilledUp <- rbind(dfDays, missingDates)
+# order by date
+dfFilledUp <- dfFilledUp[order(dfFilledUp$date),]
+nrow(dfDays) + nrow(missingDates)
+nrow(dfFilledUp)
+
+# test "filling up" missing data
+# source of the example: https://stackoverflow.com/questions/27368195/r-ts-with-missing-values
+
+testZoo <- zoo(dfDays$energy, dfDays$date)
+plot(testZoo)
+
+zooValues <- zoo(dfFilledUp$energy, dfFilledUp$date)
+plot(zooValues)
+
+approxValues <- na.approx(zooValues)
+plot(approxValues)
+
+locfValues <- na.locf(zooValues)
+plot(locfValues)
+
+
