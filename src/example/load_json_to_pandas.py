@@ -33,7 +33,7 @@ def read_single_json(json_file):
 if __name__ == "__main__":
     #create Dataframe
     data = read_single_json('/home/claude/repo/bda-solar/data/data_timestamp/pfadibaar_solarlog_1509887998.json')
-    # clrean data from bad syntax and complex JSON structure..
+    # clean data from bad syntax and complex JSON structure..
 
     del data['decimalseperator']
     df = pd.DataFrame.from_records(data)
@@ -42,4 +42,4 @@ if __name__ == "__main__":
     print(dataframe.describe())
     #df['cur_yield_watt '].hist(by=df['timestamp'])
     dataframe.cur_yield_watt.hist()
-    dataframe.to_csv('/home/claude/repo/bda-solar/data/temp/converted_solarlog_v3.csv')
+    dataframe.to_csv('/home/claude/repo/bda-solar/data/temp/converted_solarlog_v4.csv')
