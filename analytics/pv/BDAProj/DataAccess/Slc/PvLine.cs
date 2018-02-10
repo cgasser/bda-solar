@@ -24,8 +24,8 @@ namespace DataAccess.Slc
 
             Timestamp = new DateTime(FileDate.Year, FileDate.Month, FileDate.Day, lineTimestamp.Hour, lineTimestamp.Minute, 0);
             TimestampUnix = (Timestamp - unixMin).TotalSeconds;
-            Power1 = decimal.Parse(cols.ElementAt(1));
-            Power2 = decimal.Parse(cols.ElementAt(2));
+            Power1 = decimal.TryParse(cols.ElementAtOrDefault(1), out decimal tmp1) ? tmp1 : default(decimal);
+            Power2 = decimal.TryParse(cols.ElementAtOrDefault(2), out decimal tmp2) ? tmp2 : default(decimal);
         }
 
         public string Print(string timestampFormat)

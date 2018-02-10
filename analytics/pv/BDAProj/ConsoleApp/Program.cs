@@ -20,7 +20,7 @@ namespace ConsoleApp
                 {
                     SourceFolder = @"D:\SBEAM",
                     SourceFileNamePattern = @"^(\d){2}-(\d){2}-(\d){2}.csv$",
-                    TargetFolder = @"C:\RProjects\HSLU_BDA_Solar\data",
+                    TargetFolder = @"C:\RProjects\bda-solar\analytics\pv\HSLU_BDA_Solar\data",
                     TargetFileName = @"birchli.csv"
                 };
 
