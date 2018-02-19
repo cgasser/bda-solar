@@ -36,6 +36,8 @@ def solar_log_call(epoch_time, id, plantname):
         data['decimalseperator'] = ','
     if 'curr_batt_power' not in data:
         data['curr_batt_power'] = ''
+    if 'co2factor' in data:
+        del data['co2factor']
     sorted_data = collections.OrderedDict(sorted(data.items()))
     logging.debug(sorted_data)
     conn.close()
