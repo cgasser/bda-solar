@@ -19,7 +19,7 @@ for file_ in allFiles:
         #print(df)
         filename = file_.replace(path, '')
         #print(filename)
-        df.to_csv(path_temp + filename, sep='\t', index_col=None)
+        df.to_csv(path_temp + filename, sep='\t',index=False)
         #with client.write(file_, encoding='utf-8') as writer:
         #    w = csv.DictWriter(writer, df.keys(), dialect=csv.excel_tab)
         #    w.writeheader()
