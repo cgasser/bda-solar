@@ -14,9 +14,10 @@ for file_ in allFiles:
     print(df)
     if 'co2factor' in df.columns:
         del df['co2factor']
-        print("we have a co2factor")
-        print(df)
+        #print("we have a co2factor")
+        #print(df)
         filename = file_.replace(path, '')
+        #print(filename)
         df.to_csv(path_temp + filename, sep='\t')
         #with client.write(file_, encoding='utf-8') as writer:
         #    w = csv.DictWriter(writer, df.keys(), dialect=csv.excel_tab)
