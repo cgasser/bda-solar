@@ -24,7 +24,7 @@ import pandas as pd
 
 def open_weather_call(app_id, zip_id):
     conn = http.client.HTTPConnection("")
-    r = requests.get("http://api.openweathermap.org/data/2.5/weather?zip=" + str(zip_id) + ",ch" + "&appid=" + app_id)
+    r = requests.get("http://api.openweathermap.org/data/2.5/weather?zip=" + str(zip_id) + ",ch" + "&appid=" + app_id + "&units=metric")
     logging.info("Response: " + str(r.status_code) + " " + r.reason)
 
     data = r.json()  # This will return entire content.
