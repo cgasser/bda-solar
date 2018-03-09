@@ -82,7 +82,9 @@ if __name__ == "__main__":
                 , '26678':  'Winsun AG, Steg'
                 , '54349':  'Meyer Rolf, Baar'
                 , '48542':  'Himmelrichstrasse 1ab, Baar'
-                , '55610':  'Betschart René, Steinhausen'}
+                , '55610':  'Betschart René, Steinhausen'
+                , '58209':  'Maechler Paul, Allenwinden'
+                , '49645':  'Loosmann Johannes, Hausen am Albis'}
 
     for site_id in pv_sites:
         logging.info("Start API call for" + pv_sites[site_id] + "at Time: " + epoch_time_now)
