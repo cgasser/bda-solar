@@ -84,6 +84,7 @@ if __name__ == "__main__":
                 , '48542':  'Himmelrichstrasse 1ab, Baar'
                 , '55610':  'Betschart René, Steinhausen'
                 , '58209':  'Maechler Paul, Allenwinden'
+                , '52738':  'Haller Roman, Rifferswil'
                 , '49645':  'Loosmann Johannes, Hausen am Albis'}
 
     for site_id in pv_sites:
