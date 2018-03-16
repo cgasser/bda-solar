@@ -1,23 +1,17 @@
-######################################################
-# Test Zeitrehenanalyse der Leistung einer PV-Anlage
-######################################################
+#################################################################
+# Zeitrehenanalyse / Regression mit der Leistung einer PV-Anlage
+#################################################################
 
-# install.package(data.table)
 library(data.table)
-# install.package(xts)
 library(xts)
-# install.package(ggplot2)
 library(ggplot2)
-# install.package(plotly)
 library(plotly)
-
 library(lubridate)
 library(tseries)
 library(zoo)
 
-# Set the time zone at the system level
-Sys.setenv(TZ="Europe/Zurich")
-
+# set time zone environment variable
+Sys.setenv(TZ="GMT")
 
 ########## Birchli
 ########## Daten (raw): Google Drive\CAS_BDA7\Daten\PV_Birchli_29_10_2017\SBEAM
@@ -51,19 +45,27 @@ colnames(dfRaw) <- c("time", "power")
 df <- dfRaw[dfRaw$power < 3,]
 colnames(df) <- c("time", "power")
 
-# filter for complete months
-startDate <- ymd_hms("2010-12-01 00:00:00")
-endDate <- ymd_hms("2017-10-01 00:00:00")
+# filter for entire months
+#startDate <- ymd_hms("2010-12-01 00:00:00")
+#endDate <- ymd_hms("2017-10-01 00:00:00")
 #startDate <- ymd_hms("2011-01-01 00:00:00")
 #endDate <- ymd_hms("2015-01-01 00:00:00")
+#startDate <- ymd_hms("2010-12-01 00:00:00")
+#endDate <- ymd_hms("2014-12-01 00:00:00")
+#startDate <- ymd_hms("2014-07-01 00:00:00")
+#endDate <- ymd_hms("2014-07-04 00:00:00")
 
 df <- subset(df, df$time >= startDate)
 df <- subset(df, df$time < endDate)
 
 ### POWER
 
-# Visualize the power curve along time
-plot_ly(data = df, x=~time, y=~power, type = "scatter", mode = "lines+markers", line=list(color="darkgreen"))
+# Visualize the power measurements along time
+#plot(df, xlab = "Datum und Zeit", ylab = "Leistung [kW]", main = "Leistung", type = "b", pch = 20, col = 20)
+plot_ly(data = df, x=~time, y=~power, type = "scatter", mode = "lines+markers", line=list(color="darkgreen")) %>%
+  layout(title = 'Leistung Photovoltaik-Anlage',
+         xaxis = list(title = 'Zeit'),
+         yaxis = list(title = 'Leistung [kW]', range = c(0, 2.5)))
 
 ### ENERGY
 
@@ -75,33 +77,65 @@ class(df$date)
 # sum up the 10-min power values per day to obtain a proxy value for the energy produced
 dfDays <- aggregate(list(energy = df$power), by = list(date = df$date), FUN = sum)
 dfMonths <- aggregate(list(energy = df$power), by = list(date = df$month), FUN = sum)
+class(dfMonths$date)
 
 # filter out zero days
-dfDays <- dfDays[dfDays$energy > 0,]
-dfMonths <- dfMonths[dfMonths$energy > 0,]
+#dfDays <- dfDays[dfDays$energy > 0,]
+#dfMonths <- dfMonths[dfMonths$energy > 0,]
 
-# visualize the energy per day along time
-plot(dfDays)
-plot(dfMonths)
+# select aggregation level
+#dfCum <- dfDays
+dfCum <- dfMonths
+
+# visualize the energy along time (date)
+?plot
+plot(dfCum, xlab = "Jahr", ylab = "Energie (proxy)", main = "Monatliche Produktion")
+
+# add an obs column
+dfCum$obs <- 1:nrow(dfCum)
+
+# visualize the energy along time (obs)
+plot(dfCum$obs, dfCum$energy)
+
+# Linear Regression
+linearModel = lm(dfCum$energy ~ dfCum$obs)
+summary(linearModel)
+abline(linearModel)
+
+# loess(): Local Polynomial Regression Fitting
+?loess
+loessEnergy <- loess(dfCum$energy ~ dfCum$ob)
+plot(loessEnergy)
+lines(loessEnergy$x, loessEnergy$fitted)
 
 # Additive Time Series
 # definition ts: data which has been sampled at equispaced points in time
 # per day: use a frequency of 365 since the data contains one sample per day and is expected to repeat every year
+?ts
 tsEnergyPerDay <- ts(dfDays$energy, start = c(2010, 12), end = c(2015, 01), frequency = 365)
 time(tsEnergyPerDay)
+print(tsEnergyPerDay)
 plot(tsEnergyPerDay)
-decomposeEnergy <- decompose(tsEnergyPerDay, "additive")
 # per month: use a frequency of 365 since the data contains one sample per day and is expected to repeat every year
 tsEnergyPerMonth <- ts(dfMonths$energy, start = c(2010, 12), frequency = 12)
 time(tsEnergyPerMonth)
+print(tsEnergyPerMonth)
 plot(tsEnergyPerMonth)
-decomposeEnergy <- decompose(tsEnergyPerMonth, "additive")
+
+# decompose(): Classical Seasonal Decomposition by Moving Averages
+?decompose
+decomposeEnergy <- decompose(tsEnergyPerDay, type = "additive")
+decomposeEnergy <- decompose(tsEnergyPerMonth, type = "additive")
 
 plot(as.ts(decomposeEnergy$seasonal))
 plot(as.ts(decomposeEnergy$trend))
 plot(as.ts(decomposeEnergy$random))
 plot(decomposeEnergy)
 
+# stl(): Seasonal Decomposition of Time Series by Loess
+?stl
+
+# MISSING DATA
 
 # represent missing data as NA (2015-10-10..2016-02-29)
 # https://stackoverflow.com/questions/28689428/pad-data-frame-with-missing-dates-in-a-series
@@ -131,5 +165,3 @@ plot(approxValues)
 
 locfValues <- na.locf(zooValues)
 plot(locfValues)
-
-
