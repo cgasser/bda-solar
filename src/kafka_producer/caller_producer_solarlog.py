@@ -16,7 +16,7 @@ import requests
 import logging
 from confluent_kafka import Producer
 import socket
-from hdfs import InsecureClient
+    from hdfs import InsecureClient
 import collections
 
 
@@ -85,7 +85,23 @@ if __name__ == "__main__":
                 , '55610':  'Betschart René, Steinhausen'
                 , '58209':  'Maechler Paul, Allenwinden'
                 , '52738':  'Haller Roman, Rifferswil'
-                , '49645':  'Loosmann Johannes, Hausen am Albis'}
+                , '49645':  'Loosmann Johannes, Hausen am Albis'
+                , '40081':  'Zengaffinen Hans, Steg'
+                , '39452':  'Zengaffinen Kurt, Steg'
+                , '47346':  'Steiner Bernhard, Steg'
+                , '26293':  'Seiler René, Steg'
+                , '42717':  'Moser Robert,Steg'
+                , '42714':  'Mathieu Jörg, Steg'
+                , '32725':  'Martig-Zenhäusern Ernestine, Steg'
+                , '28296':  'Johner Daniel, Steg'
+                , '57534':  'Imboden Beat,Steg'
+                , '32600':  'Hugo Peter, Steg'
+                , '28710':  'Heinzen Matthias und Christine, Steg'
+                , '48590':  'Garage Fryand AG, Steg'
+                , '40587':  'Bregy Haustechnik AG, Steg'
+                , '43198':  'Bregy Bernhard, Steg'
+                , '51995':  'Baumgartu AG, Haus B'
+                , '52723':  'Baumgartu AG, Haus A, Steg'}
 
     for site_id in pv_sites:
         logging.info("Start API call for" + pv_sites[site_id] + "at Time: " + epoch_time_now)
