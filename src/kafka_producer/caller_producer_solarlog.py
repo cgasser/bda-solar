@@ -16,7 +16,7 @@ import requests
 import logging
 from confluent_kafka import Producer
 import socket
-    from hdfs import InsecureClient
+from hdfs import InsecureClient
 import collections
 
 
