@@ -125,6 +125,9 @@ y <- filter(x, filter = c(0.5, rep(1, (2 * q - 1)), 0.5)/(2 * q))
 
 # 23.3.3 Weitere Glättungsmethoden
 
+class(presidents)
+plot(presidents)
+
 # Grundsätzlich können auch andere Glättungsverfahren zur Anwendung kommen. In R stehen
 # etwa die Funktionen lowess(), loess(), ksmooth(), supsmu() oder smooth.spline()
 # zur Verfügung. Die letztgenannte Funktion kann recht bequem eingesetzt werden, um
@@ -147,10 +150,14 @@ x.time
 x <- x.time[-pos.na]
 y <- presidents[-pos.na]
 xy.smooth <- smooth.spline(x,y)
+xy.smooth2 <- smooth.spline(x,y, spar = 0.5)
+xy.smooth3 <- smooth.spline(x,y, spar = 0.8)
 
 # Das Zeichnen mittels
 plot(presidents)
 lines(xy.smooth, col = "red")
+lines(xy.smooth2, col = "blue")
+lines(xy.smooth3, col = "orange")
 
 # zeigt, dass nur eine recht schwache Glättung erfolgt, so dass also beobachtete und geglättete
 # Reihe recht nahe beieinander sind. Stärkere Glättungen können durch das Setzen
